@@ -1,173 +1,102 @@
-# Multilingual Government Form Translator
+# 🛡️ FormSetu V2.0 — Multilingual Government Form Studio
 
-A comprehensive web application for translating government forms and documents into multiple Indian regional languages. The application provides both form field translation and document translation capabilities with OCR support.
+FormSetu is a premium, high-fidelity, and secure dark-mode web application for extracting, translating, and downloading government forms and official documents side-by-side. 
 
-## Features
+FormSetu features a stateless architecture leveraging **Gemini 2.5 Flash** for layout-preserving multimodal OCR and field extraction, paired with **Google Translate API** and a robust **pdfkit Unicode compiler** to produce clean, regional-compliant translated outputs.
 
-- **Form Translation**: Translate government form fields and labels into 12+ Indian languages
-- **Document Translation**: Upload PDFs or text files and translate them with OCR support
-- **Multi-language Support**: Hindi, Bengali, Tamil, Telugu, Marathi, Gujarati, Kannada, Malayalam, Punjabi, Odia, Assamese, Urdu
-- **OCR Integration**: Automatic text extraction from scanned PDFs using Tesseract.js
-- **Privacy-first**: All processing happens in the browser, no data stored on servers
-- **Modern UI**: Beautiful, responsive interface built with React and Tailwind CSS
+---
 
-## Architecture
+## 🎨 Design System
 
-- **Frontend**: React + TypeScript + Vite + Tailwind CSS
-- **Backend**: Node.js + Express + TypeScript
-- **Translation**: LibreTranslate API with fallback services
-- **OCR**: Tesseract.js for PDF text extraction
+FormSetu utilizes a cutting-edge visual aesthetic designed to impress:
+- **Core Theme:** Deep Space Navy background (`#030712`) overlayed with a custom `40px` square mesh grid.
+- **Accents:** Cybernetic Neon Cyan (`#00f2ff`) primary color and deep space Purple (`#7000ff`) glow shadows.
+- **Typography:** Bold headings styled in **Cabinet Grotesk** (Tight tracking, 900 weight) paired with geometric **Satoshi** body text.
+- **Glassmorphism:** Navigation menus, workspace cards, and auth portals feature translucent panels (`rgba(255,255,255,0.03)` background, `backdrop-filter: blur(12px)`, and thin `rgba(255,255,255,0.1)` boundaries).
+- **Animations:** Subtle scanning lines, glow transitions, and responsive micro-interactions.
 
-## Quick Start
+---
 
-### Prerequisites
+## ⚙️ Core Architecture (Side-by-Side Studio)
 
-- Node.js 18+ 
-- npm or pnpm
+FormSetu is built on a clean, honest, and highly robust document workflow:
 
-### Development Setup
+1. **Secure Ingestion & Routing**: Scanned JPG, PNG, or PDF files are validated through Multer buffers.
+2. **Dynamic OCR Decision Tree**:
+   - **Digital PDFs**: Extracted using a high-efficiency digital text-layer scraper (`pdf-parse`) to optimize speeds.
+   - **Scanned PDFs or Images**: Handled using **Gemini 2.5 Flash** to extract complex form field labels, headings, and fillable fields in reading order.
+3. **Structured Field Preserver**: The Gemini prompt is explicitly tuned to maintain blank lines, underline markers, and fillable inputs using underscores (e.g. `प्रथम नाम :  _______ मध्य नाम : ________`).
+4. **Chunked Translation Stream**: Splices long text segments into clean `4500` character chunks to bypass Translation API boundaries and preserves sentences smoothly.
+5. **High-Fidelity PDF Kit Compiler**: Exports clean translated text into Unicode-compliant PDFs with Arial/Mangal fallbacks to guarantee Indic regional characters render without squares or rectangles.
+6. **Zero-Storage Security Policy**: All uploaded buffers and temp files are forcefully scrubbed from server memory and disk (`fs.unlinkSync`) immediately upon success, completion, or error states.
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd Mulitilingual-Government-Form-Translator
-   ```
+---
 
-2. **Start both servers**
-   
-   **Windows:**
-   ```bash
-   start-dev.bat
-   ```
-   
-   **Linux/Mac:**
-   ```bash
-   chmod +x start-dev.sh
-   ./start-dev.sh
-   ```
+## 🛡️ Secure Authentication Guard
+* **Local Session Registry**: Agent sign-up profiles, passphrases, and secure sessions are tracked dynamically via local storage. 
+* **State Safeguard**: Bypasses complex databases while fully enforcing credential-based access controls, complete with password match verification and duplicate register locks.
 
-3. **Access the application**
-   - Frontend: http://localhost:5173
-   - Backend API: http://localhost:3001
+---
 
-### Manual Setup
+## 🚀 Quick Start
 
-1. **Backend Setup**
+### 📋 Prerequisites
+- **Node.js** v18+
+- **pnpm** or **npm** installed
+
+### 🛠️ Configuration
+Rename or create a `.env` file in the **`Backend`** folder:
+```env
+PORT=3001
+GEMINI_API_KEY=your_gemini_api_key_here
+CORS_ORIGIN=http://localhost:5173
+TEMP_FILE_DIR=temp_uploads
+```
+
+### 💻 Development Setup
+
+1. **Start the Backend Engine**:
    ```bash
    cd Backend
    npm install
-   cp .env.example .env  # Configure your environment variables
    npm run dev
    ```
+   * Running at: `http://localhost:3001/`
 
-2. **Frontend Setup**
+2. **Start the Frontend Studio**:
    ```bash
-   cd Frontend
+   cd ../Frontend
    npm install
    npm run dev
    ```
+   * Running at: `http://localhost:5173/`
 
-## Configuration
+---
 
-### Backend Environment Variables
-
-Create a `.env` file in the `Backend` directory:
-
-```env
-# Translation API Configuration
-TRANSLATE_API_KEY=your_api_key_here
-TRANSLATE_API_URL=https://libretranslate.de
-
-# Server Configuration
-PORT=3001
-NODE_ENV=development
-
-# CORS Configuration
-CORS_ORIGIN=http://localhost:5173
-```
-
-### Frontend Environment Variables
-
-Create a `.env` file in the `Frontend` directory:
-
-```env
-# Backend API Configuration
-VITE_API_BASE_URL=http://localhost:3001
-```
-
-## API Endpoints
-
-### Backend API
-
-- `GET /health` - Health check
-- `POST /api/translate` - Translate text
-- `POST /api/detect` - Detect language
-- `GET /api/languages` - Get supported languages
-
-### Example API Usage
-
-```bash
-# Translate text
-curl -X POST http://localhost:3001/api/translate \
-  -H "Content-Type: application/json" \
-  -d '{"q": "Hello world", "target": "hi", "source": "auto"}'
-
-# Detect language
-curl -X POST http://localhost:3001/api/detect \
-  -H "Content-Type: application/json" \
-  -d '{"q": "नमस्ते दुनिया"}'
-```
-
-## Project Structure
+## 📂 Project Structure
 
 ```
-├── Backend/                 # Backend API server
+├── Backend/                 # Express Node.js Backend Server
 │   ├── src/
-│   │   ├── routes/         # API routes
-│   │   ├── services/       # Business logic
-│   │   └── index.ts        # Server entry point
-│   ├── package.json
-│   └── README.md
-├── Frontend/               # React frontend
+│   │   ├── config/         # Environment standard validation
+│   │   ├── middleware/     # Rate limiter & Zod validation schema
+│   │   ├── services/       # OCR & Translation Engines (Gemini & Google)
+│   │   ├── controllers/    # Upload controller & stream handler
+│   │   └── server.ts       # Server bootloader
+│   ├── .env                # Private keys config (Excluded from git)
+│   └── package.json
+│
+├── Frontend/               # React Vite Frontend Client
 │   ├── client/
-│   │   ├── components/     # React components
-│   │   ├── lib/           # Utilities and config
-│   │   ├── pages/         # Page components
-│   │   └── App.tsx        # Main app component
-│   ├── package.json
-│   └── README.md
-├── start-dev.bat          # Windows startup script
-├── start-dev.sh           # Unix startup script
-└── README.md              # This file
+│   │   ├── components/     # Document & Translation side-by-side viewers
+│   │   ├── pages/          # Unified landing, auth, upload & studio pages
+│   │   ├── hooks/          # useTranslation core state-machine
+│   │   └── App.tsx         # Routing entry point
+│   └── package.json
+│
+└── .gitignore               # Multi-folder exclusion rule sheet
 ```
 
-## Technologies Used
+---
 
-### Frontend
-- React 18
-- TypeScript
-- Vite
-- Tailwind CSS
-- Radix UI
-- React Router
-- PDF.js
-- Tesseract.js
-
-### Backend
-- Node.js
-- Express
-- TypeScript
-- Zod (validation)
-- CORS
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
-
-## License
-
-This project is licensed under the MIT License.
+*FormSetu — Produced for a secure, fast, and digitally accessible Multilingual India.* 🇮🇳

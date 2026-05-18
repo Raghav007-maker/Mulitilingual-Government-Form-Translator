@@ -2,24 +2,38 @@
   "name": "multilingual-form-translator-backend",
   "version": "1.0.0",
   "description": "Backend API for Multilingual Government Form Translator",
-  "main": "dist/index.js",
+  "main": "dist/server.js",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "tsx watch src/server.ts",
     "build": "tsc",
-    "start": "node dist/index.js",
+    "start": "node dist/server.js",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "express": "^5.1.0",
+    "@google/generative-ai": "^0.24.1",
+    "@pdf-lib/fontkit": "^1.1.1",
+    "@types/pdfkit": "^0.17.6",
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.5.2",
+    "multer": "^2.1.1",
+    "pdf-lib": "^1.17.1",
+    "pdf-parse": "^2.4.5",
+    "pdfkit": "^0.18.0",
+    "sharp": "^0.34.5",
+    "tesseract.js": "^7.0.0",
+    "uuid": "^14.0.0",
+    "winston": "^3.19.0",
     "zod": "^3.25.76"
   },
   "devDependencies": {
-    "@types/express": "^5.0.3",
     "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/multer": "^2.1.0",
     "@types/node": "^24.2.1",
+    "@types/uuid": "^10.0.0",
     "tsx": "^4.20.3",
     "typescript": "^5.9.2"
   }

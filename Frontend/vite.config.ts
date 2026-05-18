@@ -20,9 +20,7 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./client"),
     },
   },
-  optimizeDeps: {
-    include: ['pdfjs-dist']
-  },
+
   worker: {
     format: 'es'
   }

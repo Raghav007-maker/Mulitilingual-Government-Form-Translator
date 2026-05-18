@@ -1,100 +1,38 @@
 /** @import must precede all other statements */
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap");
+@import url("https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,900&f[]=satoshi@300,400,500,700,900&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  /**
-   * Tailwind CSS theme
-   * tailwind.config.ts expects the following color variables to be expressed as HSL values.
-   * A different format will require also updating the theme in tailwind.config.ts.
-  */
   :root {
-    /* Dark blue + black base */
-    --background: 220 60% 6%;
+    --background: 224 71% 4%;
     --foreground: 210 40% 98%;
 
-    --card: 222 55% 7%;
+    --card: 224 71% 4%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 222 55% 7%;
+    --popover: 224 71% 4%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 217 91% 60%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 184 100% 50%; /* Cyan #00f2ff */
+    --primary-foreground: 224 71% 4%;
 
-    --secondary: 222 33% 12%;
+    --secondary: 266 100% 50%; /* Purple #7000ff */
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 222 33% 12%;
+    --muted: 224 30% 12%;
     --muted-foreground: 215 20% 65%;
 
-    --accent: 225 84% 18%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 184 100% 50%;
+    --accent-foreground: 224 71% 4%;
 
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 224 34% 18%;
-    --input: 224 34% 18%;
-    --ring: 217 91% 60%;
+    --border: 224 30% 15%;
+    --input: 224 30% 15%;
+    --ring: 184 100% 50%;
 
     --radius: 0.75rem;
-
-    --sidebar-background: 220 60% 6%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 217 91% 60%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 225 84% 18%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 224 34% 18%;
-    --sidebar-ring: 217 91% 60%;
-
-    /* Brand/hero gradient tokens */
-    --brand: 217 91% 60%;
-    --brand-2: 225 84% 18%;
-    --heroFrom: 225 84% 14%;
-    --heroTo: 210 80% 6%;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
 
@@ -104,6 +42,123 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    background-color: #030712;
+    background-image: 
+      linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px), 
+      linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    font-family: 'Satoshi', sans-serif;
+    @apply text-foreground;
   }
+}
+
+/* Custom Futuristic Sci-Fi Classes */
+.font-heading {
+  font-family: 'Cabinet Grotesk', sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  @apply tracking-tight;
+}
+
+.font-body {
+  font-family: 'Satoshi', sans-serif;
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  transition: border-color 0.3s ease, background 0.3s ease;
+}
+
+.glass-panel:hover {
+  border-color: rgba(0, 242, 255, 0.2);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.glow-primary {
+  background-color: #00f2ff;
+  color: #030712;
+  box-shadow: 0 0 20px rgba(0, 242, 255, 0.4);
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+.glow-primary:hover {
+  box-shadow: 0 0 35px rgba(0, 242, 255, 0.7);
+  transform: translateY(-2px);
+}
+
+.glow-purple {
+  background-color: #7000ff;
+  color: #ffffff;
+  box-shadow: 0 0 20px rgba(112, 0, 255, 0.4);
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+.glow-purple:hover {
+  box-shadow: 0 0 35px rgba(112, 0, 255, 0.7);
+  transform: translateY(-2px);
+}
+
+.glass-secondary {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.glass-secondary:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.tilt-card {
+  transform: perspective(1000px) rotateX(3deg) rotateY(-3deg);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.tilt-card:hover {
+  transform: perspective(1000px) rotateX(0deg) rotateY(0deg);
+}
+
+/* Scanning Glow Line Animation */
+.scan-line {
+  position: relative;
+  overflow: hidden;
+}
+
+.scan-line::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0, 242, 255, 0.15), transparent);
+  animation: scan 6s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes scan {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+/* Cyber grid mesh background overlay */
+.mesh-glow {
+  position: absolute;
+  top: -10%;
+  left: -10%;
+  width: 120%;
+  height: 120%;
+  background: radial-gradient(circle at 30% 20%, rgba(0, 242, 255, 0.08) 0%, transparent 40%),
+              radial-gradient(circle at 70% 60%, rgba(112, 0, 255, 0.08) 0%, transparent 40%);
+  z-index: 0;
+  pointer-events: none;
 }

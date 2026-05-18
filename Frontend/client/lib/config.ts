@@ -7,4 +7,5 @@ export const API_ENDPOINTS = {
   DETECT: `${API_BASE_URL}/api/detect`,
   LANGUAGES: `${API_BASE_URL}/api/languages`,
   HEALTH: `${API_BASE_URL}/health`,
+  UPLOAD: `${API_BASE_URL}/api/upload/document`,
 } as const;
