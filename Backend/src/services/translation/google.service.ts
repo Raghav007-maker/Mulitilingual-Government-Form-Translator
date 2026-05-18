@@ -27,11 +27,28 @@ export class GoogleTranslateService implements ITranslationProvider {
     }
 
     try {
-      logger.info(`Translating text to English using Gemini 2.5 Flash API... target: ${target}`);
+      const LANGUAGE_MAP: Record<string, string> = {
+        hi: 'Hindi',
+        bn: 'Bengali',
+        ta: 'Tamil',
+        te: 'Telugu',
+        mr: 'Marathi',
+        gu: 'Gujarati',
+        kn: 'Kannada',
+        ml: 'Malayalam',
+        pa: 'Punjabi',
+        or: 'Odia',
+        as: 'Assamese',
+        ur: 'Urdu',
+        en: 'English'
+      };
+      
+      const targetLanguageName = LANGUAGE_MAP[target] || target || 'English';
+      logger.info(`Translating text to ${targetLanguageName} using Gemini 2.5 Flash API... target: ${target}`);
       const model = this.genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
       
       const prompt = `You are a high-fidelity translator processing official/government documents.
-Translate the following extracted text from a regional Indian language (source: ${source}) into clear, grammatically correct, structured English.
+Translate the following extracted text (source language: ${source}) into clear, grammatically correct, structured ${targetLanguageName}.
 
 Strict rules for formatting preservation:
 1. Preserve all section headings, layout boundaries, and labels.

@@ -2,7 +2,7 @@
 
 FormSetu is a premium, high-fidelity, and secure dark-mode web application for extracting, translating, and downloading government forms and official documents side-by-side. 
 
-FormSetu features a stateless architecture leveraging **Gemini 2.5 Flash** for layout-preserving multimodal OCR and field extraction, paired with **Google Translate API** and a robust **pdfkit Unicode compiler** to produce clean, regional-compliant translated outputs.
+FormSetu features a stateless architecture leveraging **Gemini 2.5 Flash** for layout-preserving multimodal OCR and field extraction, paired with **Gemini 2.5 Flash dynamic translation mapping** and a robust **pdfkit Unicode compiler** to produce clean, regional-compliant translated outputs.
 
 ---
 
@@ -26,7 +26,7 @@ FormSetu is built on a clean, honest, and highly robust document workflow:
    - **Digital PDFs**: Extracted using a high-efficiency digital text-layer scraper (`pdf-parse`) to optimize speeds.
    - **Scanned PDFs or Images**: Handled using **Gemini 2.5 Flash** to extract complex form field labels, headings, and fillable fields in reading order.
 3. **Structured Field Preserver**: The Gemini prompt is explicitly tuned to maintain blank lines, underline markers, and fillable inputs using underscores (e.g. `प्रथम नाम :  _______ मध्य नाम : ________`).
-4. **Chunked Translation Stream**: Splices long text segments into clean `4500` character chunks to bypass Translation API boundaries and preserves sentences smoothly.
+4. **Dynamic Target Language Mapping**: Automatically maps frontend target language selections (Hindi, Bengali, Tamil, Telugu, Marathi, Gujarati, Kannada, Malayalam, Punjabi, Odia, Assamese, and Urdu) into the Gemini Translation Engine, translating original documents layout-safely into the chosen Indic regional script.
 5. **High-Fidelity PDF Kit Compiler**: Exports clean translated text into Unicode-compliant PDFs with Arial/Mangal fallbacks to guarantee Indic regional characters render without squares or rectangles.
 6. **Zero-Storage Security Policy**: All uploaded buffers and temp files are forcefully scrubbed from server memory and disk (`fs.unlinkSync`) immediately upon success, completion, or error states.
 
@@ -45,7 +45,7 @@ FormSetu is built on a clean, honest, and highly robust document workflow:
 - **pnpm** or **npm** installed
 
 ### 🛠️ Configuration
-Rename or create a `.env` file in the **`Backend`** folder:
+Create or update the `.env` file in the **`Backend`** folder:
 ```env
 PORT=3001
 GEMINI_API_KEY=your_gemini_api_key_here
@@ -78,10 +78,10 @@ TEMP_FILE_DIR=temp_uploads
 ```
 ├── Backend/                 # Express Node.js Backend Server
 │   ├── src/
-│   │   ├── config/         # Environment standard validation
-│   │   ├── middleware/     # Rate limiter & Zod validation schema
-│   │   ├── services/       # OCR & Translation Engines (Gemini & Google)
-│   │   ├── controllers/    # Upload controller & stream handler
+│   │   ├── config/         # Environment standard validation & Env Loading
+│   │   ├── middleware/     # Rate limiter, Error handler & Zod validator
+│   │   ├── services/       # OCR & Dynamic Translation Engines (Gemini & System PDF compiler)
+│   │   ├── controllers/    # Upload controller & translate API handler
 │   │   └── server.ts       # Server bootloader
 │   ├── .env                # Private keys config (Excluded from git)
 │   └── package.json
@@ -96,6 +96,53 @@ TEMP_FILE_DIR=temp_uploads
 │
 └── .gitignore               # Multi-folder exclusion rule sheet
 ```
+
+---
+
+## ⚡ API Endpoints
+
+### 📤 Upload & OCR Document
+- **URL**: `POST /api/upload`
+- **Body**: `multipart/form-data` with `file` field containing the image or PDF.
+- **Response**:
+```json
+{
+  "success": true,
+  "jobId": "f7d75efc-974a-4e20-bf18-fe730ffc8112",
+  "originalText": "Extracted regional text here..."
+}
+```
+
+### 🌐 Translate Document
+- **URL**: `POST /api/translate`
+- **Body**: `application/json`
+```json
+{
+  "text": "Extracted regional text here...",
+  "targetLang": "bn",
+  "jobId": "f7d75efc-974a-4e20-bf18-fe730ffc8112"
+}
+```
+- **Response**:
+```json
+{
+  "success": true,
+  "translatedText": "অনুবাদ করা টেক্সট এখানে...",
+  "detectedLanguage": {
+    "language": "auto",
+    "confidence": 1
+  },
+  "provider": "gemini-translator"
+}
+```
+
+### 📥 Download Compiled Unicode PDF
+- **URL**: `GET /api/download/:jobId`
+- **Response**: Raw file stream of compiled Unicode PDF.
+
+### 🧹 Manual Storage Cleanup
+- **URL**: `DELETE /api/cleanup/:jobId`
+- **Response**: Status `200` indicating temporary buffers have been cleared from the memory registry.
 
 ---
 
