@@ -1,34 +1,11 @@
-import { Languages, Shield, User, LogOut } from "lucide-react";
+import { Shield } from "lucide-react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
 
 export default function Header({ className }: { className?: string }) {
-  const [user, setUser] = useState<{ email: string; name?: string } | null>(null);
   const location = useLocation();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const userSession = localStorage.getItem('user');
-    if (userSession) {
-      try {
-        setUser(JSON.parse(userSession));
-      } catch (e) {
-        setUser(null);
-      }
-    } else {
-      setUser(null);
-    }
-  }, [location]);
-
-  const handleSignOut = () => {
-    localStorage.removeItem('user');
-    setUser(null);
-    toast.success("Successfully signed out of secure session.");
-    navigate("/");
-  };
 
   const handleScroll = (id: string) => {
     if (location.pathname !== '/') {
@@ -43,16 +20,10 @@ export default function Header({ className }: { className?: string }) {
 
   const handleTranslateClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    const userSession = localStorage.getItem('user');
-    if (!userSession) {
-      toast.error('Authentication Required. Please log in or sign up first to use FormSetu.');
-      navigate('/login');
-    } else {
-      navigate('/');
-      setTimeout(() => {
-        window.dispatchEvent(new Event('trigger-translate-flow'));
-      }, 100);
-    }
+    navigate('/');
+    setTimeout(() => {
+      window.dispatchEvent(new Event('trigger-translate-flow'));
+    }, 100);
   };
 
   return (
@@ -94,32 +65,9 @@ export default function Header({ className }: { className?: string }) {
         </nav>
 
         <div className="flex items-center gap-3">
-          {user ? (
-            <>
-              {/* Authenticated Badges */}
-              <div className="flex items-center space-x-2 bg-white/5 border border-white/10 rounded-xl px-3 py-1.5 font-body text-xs text-gray-300">
-                <User size={12} className="text-[#00f2ff]" />
-                <span className="font-semibold">{user.name || user.email.split('@')[0]}</span>
-              </div>
-              <Button 
-                onClick={handleSignOut}
-                variant="ghost" 
-                className="text-white hover:text-red-400 hover:bg-white/5 font-body flex items-center space-x-1.5"
-              >
-                <LogOut size={14} />
-                <span>Sign Out</span>
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button asChild variant="ghost" className="text-white hover:text-[#00f2ff] hover:bg-white/5 font-body">
-                <Link to="/login">Sign In</Link>
-              </Button>
-              <Button asChild className="glow-primary font-body">
-                <Link to="/signup">Get Started</Link>
-              </Button>
-            </>
-          )}
+          <Button onClick={handleTranslateClick} className="glow-primary font-body">
+            Start Translating
+          </Button>
         </div>
       </div>
     </header>

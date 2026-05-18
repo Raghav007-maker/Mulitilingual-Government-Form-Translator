@@ -55,7 +55,11 @@ app.use((_req, res) => {
   res.status(404).json({ success: false, error: 'Route not found' });
 });
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   logger.info(`🚀 FormSetu Backend Server running on port ${PORT}`);
   logger.info(`📊 Health check: http://localhost:${PORT}/health`);
 });
+
+// Set server timeout to 10 minutes (600,000 ms) to prevent socket timeouts on large files (e.g. 15MB scanned PDFs)
+server.timeout = 600000;
+server.keepAliveTimeout = 600000;

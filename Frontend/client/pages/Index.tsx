@@ -15,10 +15,7 @@ export default function Index() {
 
   React.useEffect(() => {
     const handleTriggerFlow = () => {
-      const userSession = localStorage.getItem('user');
-      if (userSession) {
-        setStep('upload');
-      }
+      setStep('upload');
     };
 
     window.addEventListener('trigger-translate-flow', handleTriggerFlow);
@@ -26,13 +23,7 @@ export default function Index() {
   }, []);
 
   const handleStart = () => {
-    const userSession = localStorage.getItem('user');
-    if (!userSession) {
-      toast.error('Authentication Required. Please log in or sign up first to use FormSetu.');
-      navigate('/login');
-    } else {
-      setStep('upload');
-    }
+    setStep('upload');
   };
 
   const handleFileSelect = async (file: File) => {

@@ -1,81 +1,69 @@
 import { ITranslationProvider } from './translator.interface.js';
 import { TranslationRequest, TranslationResponse } from '../../types/index.js';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+import { env } from '../../config/env.js';
 import { logger } from '../../utils/logger.js';
 import { AppError } from '../../utils/errors.js';
 
-const GOOGLE_URL = 'https://translate.googleapis.com/translate_a/single';
+export class GoogleTranslateService implements ITranslationProvider {
+  public readonly name = 'gemini-translator';
+  private genAI?: GoogleGenerativeAI;
 
-function splitChunks(text: string, max = 4500): string[] {
-  const chunks: string[] = [];
-  let buf = '';
-  // Split on double newlines or end of sentences
-  for (const seg of text.split(/((?:\n\n+)|(?:[.!?]+\s+))/g)) {
-    if ((buf + seg).length > max && buf) {
-      chunks.push(buf);
-      buf = seg.trimStart();
-    } else {
-      buf += seg;
+  constructor() {
+    if (env.GEMINI_API_KEY) {
+      this.genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);
     }
   }
-  if (buf) chunks.push(buf);
-  return chunks.filter(Boolean);
-}
-
-async function fetchTranslation(params: URLSearchParams): Promise<any> {
-  const res = await fetch(`${GOOGLE_URL}?${params}`, {
-    headers: {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-    },
-  });
-  if (!res.ok) throw new AppError(`Google Translate API error: HTTP ${res.status}`, res.status);
-  return res.json();
-}
-
-export class GoogleTranslateService implements ITranslationProvider {
-  public readonly name = 'google-translate';
 
   public async translate(req: TranslationRequest): Promise<TranslationResponse> {
     const { text, target, source = 'auto' } = req;
     
+    if (!env.GEMINI_API_KEY) {
+      throw new AppError('GEMINI_API_KEY is not configured in .env file.', 500);
+    }
+    
+    if (!this.genAI) {
+      this.genAI = new GoogleGenerativeAI(env.GEMINI_API_KEY);
+    }
+
     try {
-      logger.info(`Translating text of size ${text.length} chars to language ${target}...`);
-      const chunks = splitChunks(text, 4500);
-      const translatedParts: string[] = [];
-
-      for (const chunk of chunks) {
-        const params = new URLSearchParams({
-          client: 'gtx',
-          sl: source,
-          tl: target,
-          dt: 't',
-          q: chunk,
-        });
-
-        const data = await fetchTranslation(params);
-        if (!Array.isArray(data?.[0])) {
-          throw new AppError('Unexpected response structure from translation service', 502);
-        }
-        
-        const chunkTranslation = data[0].map((item: any) => item[0] ?? '').join('');
-        translatedParts.push(chunkTranslation);
-      }
-
-      const translatedText = translatedParts.join('\n\n');
+      logger.info(`Translating text to English using Gemini 2.5 Flash API... target: ${target}`);
+      const model = this.genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
       
-      // Standardize detection
-      let detectedLang = 'en';
+      const prompt = `You are a high-fidelity translator processing official/government documents.
+Translate the following extracted text from a regional Indian language (source: ${source}) into clear, grammatically correct, structured English.
+
+Strict rules for formatting preservation:
+1. Preserve all section headings, layout boundaries, and labels.
+2. Mirror the exact structure of fillable form inputs, maintaining the exact underscore blank fill markers (e.g. "_______" or "__________") exactly as they appear in the original text next to their translated labels.
+3. Do not summarize, skip, interpret, or omit any text.
+4. Output only the translated text, with no extra conversational preambles, introductory markers, or metadata.
+
+Text to translate:
+---
+${text}
+---`;
+
+      const result = await model.generateContent([prompt]);
+      const translatedText = result.response.text();
+      
+      if (!translatedText) {
+        throw new AppError('Gemini translator returned an empty response', 500);
+      }
+      
+      logger.info(`Successfully completed Gemini translation. Translated ${translatedText.length} characters.`);
       
       return {
         translatedText,
         detectedLanguage: {
-          language: detectedLang,
-          confidence: 0.9
+          language: source,
+          confidence: 1.0
         },
         provider: this.name
       };
     } catch (error: any) {
-      logger.error(`Google translation failed: ${error.message || error}`);
-      throw new AppError(`Google translation failed: ${error.message || 'Unknown error'}`, 500);
+      logger.error(`Gemini translation failed: ${error.message || error}`);
+      throw new AppError(`Gemini translation failed: ${error.message || 'Unknown error'}`, 500);
     }
   }
 }
